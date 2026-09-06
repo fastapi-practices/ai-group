@@ -5,13 +5,13 @@ from sqlalchemy import Select, event
 from sqlalchemy.orm import ORMExecuteState, Session
 
 from backend.common.context import ctx
-from backend.plugin.ai.policy.registry import register_ai_resource_policy
-from backend.plugin.ai_group.listener import (
+from backend.plugin.ai_buddy.agent.policy.registry import register_ai_resource_policy
+from backend.plugin.ai_buddy_group.listener import (
     AI_GROUP_RESOURCE_MODEL_CLASSES,
     apply_ai_group_visibility_criteria,
     get_statement_ai_group_resource_models,
 )
-from backend.plugin.ai_group.policy.resource import ai_group_resource_policy
+from backend.plugin.ai_buddy_group.policy.resource import ai_group_resource_policy
 
 
 @event.listens_for(Session, 'do_orm_execute', propagate=True)

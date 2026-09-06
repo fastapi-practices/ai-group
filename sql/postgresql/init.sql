@@ -3,7 +3,7 @@ declare
     ai_group_menu_id bigint;
 begin
     insert into sys_menu (title, name, path, sort, icon, type, component, perms, status, display, cache, link, remark, parent_id, created_time, updated_time)
-    values ('分组管理', 'AIGroupManage', '/plugins/ai/group', 7, 'material-symbols:group-outline', 1, '/plugins/ai-group/views/index', null, 1, 1, 1, '', null, (select id from sys_menu where name = 'PluginAI'), now(), null)
+    values ('分组管理', 'AIGroupManage', '/plugins/ai_buddy/group', 7, 'material-symbols:group-outline', 1, '/plugins/ai_buddy_group/views/index', null, 1, 1, 1, '', null, (select id from sys_menu where name = 'PluginAIBuddy'), now(), null)
     returning id into ai_group_menu_id;
 
     insert into sys_menu (title, name, path, sort, icon, type, component, perms, status, display, cache, link, remark, parent_id, created_time, updated_time)

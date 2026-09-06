@@ -9,11 +9,11 @@ from sqlalchemy.sql import visitors
 from sqlalchemy.sql.elements import ColumnElement
 from sqlalchemy.sql.schema import Table
 
-from backend.plugin.ai.model import AIModel, AIProvider, Mcp
-from backend.plugin.ai_group.enums import AIGroupResourceScopeType, AIGroupResourceType
-from backend.plugin.ai_group.model import AIGroup, AIGroupResource, AIGroupUser
+from backend.plugin.ai_buddy.model import AIMcp, AIModel, AIProvider
+from backend.plugin.ai_buddy_group.enums import AIGroupResourceScopeType, AIGroupResourceType
+from backend.plugin.ai_buddy_group.model import AIGroup, AIGroupResource, AIGroupUser
 
-AI_GROUP_RESOURCE_MODEL_CLASSES = frozenset({AIProvider, AIModel, Mcp})
+AI_GROUP_RESOURCE_MODEL_CLASSES = frozenset({AIProvider, AIModel, AIMcp})
 AI_GROUP_RESOURCE_TABLE_MODEL_MAP = {model.__tablename__: model for model in AI_GROUP_RESOURCE_MODEL_CLASSES}
 
 
@@ -118,13 +118,13 @@ def apply_ai_group_visibility_criteria(
         options.append(
             with_loader_criteria(AIModel, sa.and_(model_provider_criteria, model_criteria), include_aliases=True)
         )
-    if Mcp in resource_models:
+    if AIMcp in resource_models:
         mcp_criteria = build_ai_group_resource_visibility_criteria(
             user_id=user_id,
-            resource_id=Mcp.id,
+            resource_id=AIMcp.id,
             resource_type=AIGroupResourceType.mcp,
         )
-        options.append(with_loader_criteria(Mcp, mcp_criteria, include_aliases=True))
+        options.append(with_loader_criteria(AIMcp, mcp_criteria, include_aliases=True))
 
     if not options:
         return statement

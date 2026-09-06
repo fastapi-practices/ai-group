@@ -3,13 +3,13 @@ from collections.abc import Sequence
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from backend.common.exception import errors
-from backend.plugin.ai.policy.base import AIResourcePolicy
-from backend.plugin.ai.policy.context import AIInvocationContext
-from backend.plugin.ai_group.crud.crud_group import ai_group_dao
-from backend.plugin.ai_group.crud.crud_resource import ai_group_resource_dao
-from backend.plugin.ai_group.crud.crud_user import ai_group_user_dao
-from backend.plugin.ai_group.enums import AIGroupResourceScopeType, AIGroupResourceType
-from backend.plugin.ai_group.model import AIGroupResource
+from backend.plugin.ai_buddy.agent.policy.base import AIResourcePolicy
+from backend.plugin.ai_buddy.agent.policy.context import AIInvocationContext
+from backend.plugin.ai_buddy_group.crud.crud_group import ai_group_dao
+from backend.plugin.ai_buddy_group.crud.crud_resource import ai_group_resource_dao
+from backend.plugin.ai_buddy_group.crud.crud_user import ai_group_user_dao
+from backend.plugin.ai_buddy_group.enums import AIGroupResourceScopeType, AIGroupResourceType
+from backend.plugin.ai_buddy_group.model import AIGroupResource
 
 
 class AIGroupResourcePolicy(AIResourcePolicy):

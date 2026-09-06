@@ -7,13 +7,13 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from backend.app.admin.model import User
 from backend.common.exception import errors
 from backend.common.pagination import paging_data
-from backend.plugin.ai.model import AIModel, AIProvider, Mcp
-from backend.plugin.ai_group.crud.crud_group import ai_group_dao
-from backend.plugin.ai_group.crud.crud_resource import ai_group_resource_dao
-from backend.plugin.ai_group.crud.crud_user import ai_group_user_dao
-from backend.plugin.ai_group.enums import AIGroupResourceScopeType, AIGroupResourceType
-from backend.plugin.ai_group.model import AIGroup
-from backend.plugin.ai_group.schema.group import (
+from backend.plugin.ai_buddy.model import AIMcp, AIModel, AIProvider
+from backend.plugin.ai_buddy_group.crud.crud_group import ai_group_dao
+from backend.plugin.ai_buddy_group.crud.crud_resource import ai_group_resource_dao
+from backend.plugin.ai_buddy_group.crud.crud_user import ai_group_user_dao
+from backend.plugin.ai_buddy_group.enums import AIGroupResourceScopeType, AIGroupResourceType
+from backend.plugin.ai_buddy_group.model import AIGroup
+from backend.plugin.ai_buddy_group.schema.group import (
     AIGroupUserIdsParam,
     CreateAIGroupParam,
     DeleteAIGroupParam,
@@ -204,7 +204,7 @@ class AIGroupService:
         for resource_ids, model, error_msg in (
             (provider_ids, AIProvider, '服务商不存在'),
             (model_ids, AIModel, '模型不存在'),
-            (mcp_ids, Mcp, 'MCP不存在'),
+            (mcp_ids, AIMcp, 'MCP不存在'),
         ):
             if not resource_ids:
                 continue

@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 
 from backend.core.conf import settings
-from backend.plugin.ai_group.api.v1.group import router as group_router
+from backend.plugin.ai_buddy_group.api.v1.group import router as group_router
 
 v1 = APIRouter(prefix=settings.FASTAPI_API_V1_PATH)
 

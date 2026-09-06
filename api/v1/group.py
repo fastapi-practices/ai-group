@@ -8,7 +8,7 @@ from backend.common.security.jwt import DependsJwtAuth
 from backend.common.security.permission import RequestPermission
 from backend.common.security.rbac import DependsRBAC
 from backend.database.db import CurrentSession, CurrentSessionTransaction
-from backend.plugin.ai_group.schema.group import (
+from backend.plugin.ai_buddy_group.schema.group import (
     AIGroupUserIdsParam,
     CreateAIGroupParam,
     DeleteAIGroupParam,
@@ -18,7 +18,7 @@ from backend.plugin.ai_group.schema.group import (
     UpdateAIGroupParam,
     UpdateAIGroupResourceParam,
 )
-from backend.plugin.ai_group.service.group_service import ai_group_service
+from backend.plugin.ai_buddy_group.service.group_service import ai_group_service
 
 router = APIRouter()
 

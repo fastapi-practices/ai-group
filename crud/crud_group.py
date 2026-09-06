@@ -5,8 +5,8 @@ from sqlalchemy import Select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy_crud_plus import CRUDPlus
 
-from backend.plugin.ai_group.model import AIGroup
-from backend.plugin.ai_group.schema.group import CreateAIGroupParam
+from backend.plugin.ai_buddy_group.model import AIGroup
+from backend.plugin.ai_buddy_group.schema.group import CreateAIGroupParam
 from backend.utils.timezone import timezone
 
 
