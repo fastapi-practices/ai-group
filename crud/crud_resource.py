@@ -4,14 +4,14 @@ from typing import Any
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy_crud_plus import CRUDPlus
 
-from backend.plugin.ai_buddy_group.model import AIGroupResource
+from backend.plugin.ai_buddy_group.model import AIBuddyResource
 from backend.utils.timezone import timezone
 
 
-class CRUDAIGroupResource(CRUDPlus[AIGroupResource]):
+class CRUDAIBuddyResource(CRUDPlus[AIBuddyResource]):
     """AI 分组资源数据库操作类"""
 
-    async def get_by_group_id(self, db: AsyncSession, group_id: int) -> Sequence[AIGroupResource]:
+    async def get_by_group_id(self, db: AsyncSession, group_id: int) -> Sequence[AIBuddyResource]:
         """
         获取分组资源
 
@@ -21,7 +21,7 @@ class CRUDAIGroupResource(CRUDPlus[AIGroupResource]):
         """
         return await self.select_models(db, group_id=group_id, deleted=0)
 
-    async def get_by_group_ids(self, db: AsyncSession, group_ids: list[int]) -> Sequence[AIGroupResource]:
+    async def get_by_group_ids(self, db: AsyncSession, group_ids: list[int]) -> Sequence[AIBuddyResource]:
         """
         批量获取分组资源
 
@@ -84,4 +84,4 @@ class CRUDAIGroupResource(CRUDPlus[AIGroupResource]):
         )
 
 
-ai_group_resource_dao: CRUDAIGroupResource = CRUDAIGroupResource(AIGroupResource)
+ai_buddy_resource_dao: CRUDAIBuddyResource = CRUDAIBuddyResource(AIBuddyResource)

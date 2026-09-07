@@ -5,12 +5,12 @@ from sqlalchemy.orm import Mapped, mapped_column
 from backend.common.model import Base, UniversalText, id_key
 
 
-class AIGroup(Base):
-    """AI 分组"""
+class AIBuddyGroup(Base):
+    """AI 分组表"""
 
-    __tablename__ = 'ai_group'
+    __tablename__ = 'ai_buddy_group'
     __table_args__ = (
-        sa.UniqueConstraint('name', 'deleted', name='uk_ai_group_name_deleted'),
+        sa.UniqueConstraint('name', 'deleted', name='uk_ai_buddy_group_name_deleted'),
         {'comment': 'AI 分组'},
     )
 

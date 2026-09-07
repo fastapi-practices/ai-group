@@ -3,23 +3,23 @@ from collections.abc import Sequence
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from backend.common.exception import errors
-from backend.plugin.ai_buddy.agent.policy.base import AIResourcePolicy
-from backend.plugin.ai_buddy.agent.policy.context import AIInvocationContext
-from backend.plugin.ai_buddy_group.crud.crud_group import ai_group_dao
-from backend.plugin.ai_buddy_group.crud.crud_resource import ai_group_resource_dao
-from backend.plugin.ai_buddy_group.crud.crud_user import ai_group_user_dao
-from backend.plugin.ai_buddy_group.enums import AIGroupResourceScopeType, AIGroupResourceType
-from backend.plugin.ai_buddy_group.model import AIGroupResource
+from backend.plugin.ai_buddy.agent.policy.base import AIBuddyResourcePolicy
+from backend.plugin.ai_buddy.agent.policy.context import AIBuddyInvocationContext
+from backend.plugin.ai_buddy_group.crud.crud_group import ai_buddy_group_dao
+from backend.plugin.ai_buddy_group.crud.crud_resource import ai_buddy_resource_dao
+from backend.plugin.ai_buddy_group.crud.crud_user import ai_buddy_user_dao
+from backend.plugin.ai_buddy_group.enums import AIBuddyResourceScopeType, AIBuddyResourceType
+from backend.plugin.ai_buddy_group.model import AIBuddyResource
 
 
-class AIGroupResourcePolicy(AIResourcePolicy):
+class AIBuddyResourcePolicy(AIBuddyResourcePolicy):
     """AI 分组资源策略"""
 
     @staticmethod
     def _resolve_ids(
         *,
-        resources: Sequence[AIGroupResource],
-        resource_type: AIGroupResourceType,
+        resources: Sequence[AIBuddyResource],
+        resource_type: AIBuddyResourceType,
     ) -> frozenset[int] | None:
         """
         计算分组指定资源 ID
@@ -31,15 +31,15 @@ class AIGroupResourcePolicy(AIResourcePolicy):
         matched_resources = [resource for resource in resources if resource.resource_type == resource_type.value]
         if not matched_resources:
             return None
-        if any(resource.scope_type == AIGroupResourceScopeType.all.value for resource in matched_resources):
+        if any(resource.scope_type == AIBuddyResourceScopeType.all.value for resource in matched_resources):
             return None
         return frozenset(
             resource.resource_id
             for resource in matched_resources
-            if resource.scope_type == AIGroupResourceScopeType.specified.value
+            if resource.scope_type == AIBuddyResourceScopeType.specified.value
         )
 
-    async def before_invoke(self, *, db: AsyncSession, context: AIInvocationContext) -> None:
+    async def before_invoke(self, *, db: AsyncSession, context: AIBuddyInvocationContext) -> None:
         """
         AI 调用前校验分组资源范围
 
@@ -49,24 +49,24 @@ class AIGroupResourcePolicy(AIResourcePolicy):
         """
         if context.is_superuser:
             return
-        group_ids = await ai_group_user_dao.get_group_ids_by_user(db, context.user_id)
+        group_ids = await ai_buddy_user_dao.get_group_ids_by_user(db, context.user_id)
         if not group_ids:
             return
-        groups = await ai_group_dao.get_by_ids(db, group_ids)
+        groups = await ai_buddy_group_dao.get_by_ids(db, group_ids)
         if not groups:
             return
-        resources = await ai_group_resource_dao.get_by_group_ids(db, group_ids)
+        resources = await ai_buddy_resource_dao.get_by_group_ids(db, group_ids)
         provider_ids = self._resolve_ids(
             resources=resources,
-            resource_type=AIGroupResourceType.provider,
+            resource_type=AIBuddyResourceType.provider,
         )
         model_ids = self._resolve_ids(
             resources=resources,
-            resource_type=AIGroupResourceType.model,
+            resource_type=AIBuddyResourceType.model,
         )
         mcp_ids = self._resolve_ids(
             resources=resources,
-            resource_type=AIGroupResourceType.mcp,
+            resource_type=AIBuddyResourceType.mcp,
         )
         if provider_ids is not None and context.provider_id not in provider_ids:
             raise errors.AuthorizationError(msg='当前用户无权使用此供应商')
@@ -76,4 +76,4 @@ class AIGroupResourcePolicy(AIResourcePolicy):
             raise errors.AuthorizationError(msg='当前用户无权使用指定 MCP')
 
 
-ai_group_resource_policy: AIGroupResourcePolicy = AIGroupResourcePolicy()
+ai_buddy_resource_policy: AIBuddyResourcePolicy = AIBuddyResourcePolicy()

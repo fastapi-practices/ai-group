@@ -4,14 +4,14 @@ from typing import Any
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy_crud_plus import CRUDPlus
 
-from backend.plugin.ai_buddy_group.model import AIGroupUser
+from backend.plugin.ai_buddy_group.model import AIBuddyUser
 from backend.utils.timezone import timezone
 
 
-class CRUDAIGroupUser(CRUDPlus[AIGroupUser]):
+class CRUDAIBuddyUser(CRUDPlus[AIBuddyUser]):
     """AI 分组用户数据库操作类"""
 
-    async def get_by_group_id(self, db: AsyncSession, group_id: int) -> Sequence[AIGroupUser]:
+    async def get_by_group_id(self, db: AsyncSession, group_id: int) -> Sequence[AIBuddyUser]:
         """
         获取分组用户
 
@@ -37,7 +37,7 @@ class CRUDAIGroupUser(CRUDPlus[AIGroupUser]):
         db: AsyncSession,
         group_id: int,
         user_ids: list[int],
-    ) -> Sequence[AIGroupUser]:
+    ) -> Sequence[AIBuddyUser]:
         """
         获取分组下指定用户绑定
 
@@ -122,4 +122,4 @@ class CRUDAIGroupUser(CRUDPlus[AIGroupUser]):
         )
 
 
-ai_group_user_dao: CRUDAIGroupUser = CRUDAIGroupUser(AIGroupUser)
+ai_buddy_user_dao: CRUDAIBuddyUser = CRUDAIBuddyUser(AIBuddyUser)

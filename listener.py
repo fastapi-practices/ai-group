@@ -9,15 +9,15 @@ from sqlalchemy.sql import visitors
 from sqlalchemy.sql.elements import ColumnElement
 from sqlalchemy.sql.schema import Table
 
-from backend.plugin.ai_buddy.model import AIMcp, AIModel, AIProvider
-from backend.plugin.ai_buddy_group.enums import AIGroupResourceScopeType, AIGroupResourceType
-from backend.plugin.ai_buddy_group.model import AIGroup, AIGroupResource, AIGroupUser
+from backend.plugin.ai_buddy.model import AIBuddyMcp, AIBuddyModel, AIBuddyProvider
+from backend.plugin.ai_buddy_group.enums import AIBuddyResourceScopeType, AIBuddyResourceType
+from backend.plugin.ai_buddy_group.model import AIBuddyGroup, AIBuddyResource, AIBuddyUser
 
-AI_GROUP_RESOURCE_MODEL_CLASSES = frozenset({AIProvider, AIModel, AIMcp})
+AI_GROUP_RESOURCE_MODEL_CLASSES = frozenset({AIBuddyProvider, AIBuddyModel, AIBuddyMcp})
 AI_GROUP_RESOURCE_TABLE_MODEL_MAP = {model.__tablename__: model for model in AI_GROUP_RESOURCE_MODEL_CLASSES}
 
 
-def get_statement_ai_group_resource_models(statement: Select[Any]) -> set[type[Any]]:
+def get_statement_ai_buddy_resource_models(statement: Select[Any]) -> set[type[Any]]:
     """
     获取查询涉及的 AI 分组可控资源模型
 
@@ -33,11 +33,11 @@ def get_statement_ai_group_resource_models(statement: Select[Any]) -> set[type[A
     return resource_models
 
 
-def build_ai_group_resource_visibility_criteria(
+def build_ai_buddy_resource_visibility_criteria(
     *,
     user_id: int,
     resource_id: Any,
-    resource_type: AIGroupResourceType,
+    resource_type: AIBuddyResourceType,
 ) -> ColumnElement[bool]:
     """
     构建 AI 分组资源可见性过滤条件
@@ -48,36 +48,36 @@ def build_ai_group_resource_visibility_criteria(
     :return:
     """
     user_group_exists = sa.exists().where(
-        AIGroupUser.user_id == user_id,
-        AIGroupUser.deleted == 0,
-        AIGroup.id == AIGroupUser.group_id,
-        AIGroup.deleted == 0,
+        AIBuddyUser.user_id == user_id,
+        AIBuddyUser.deleted == 0,
+        AIBuddyGroup.id == AIBuddyUser.group_id,
+        AIBuddyGroup.deleted == 0,
     )
     all_visible_exists = sa.exists().where(
-        AIGroupUser.user_id == user_id,
-        AIGroupUser.deleted == 0,
-        AIGroup.id == AIGroupUser.group_id,
-        AIGroup.deleted == 0,
-        AIGroupResource.group_id == AIGroup.id,
-        AIGroupResource.deleted == 0,
-        AIGroupResource.resource_type == resource_type.value,
-        AIGroupResource.scope_type == AIGroupResourceScopeType.all.value,
+        AIBuddyUser.user_id == user_id,
+        AIBuddyUser.deleted == 0,
+        AIBuddyGroup.id == AIBuddyUser.group_id,
+        AIBuddyGroup.deleted == 0,
+        AIBuddyResource.group_id == AIBuddyGroup.id,
+        AIBuddyResource.deleted == 0,
+        AIBuddyResource.resource_type == resource_type.value,
+        AIBuddyResource.scope_type == AIBuddyResourceScopeType.all.value,
     )
     specified_visible_exists = sa.exists().where(
-        AIGroupUser.user_id == user_id,
-        AIGroupUser.deleted == 0,
-        AIGroup.id == AIGroupUser.group_id,
-        AIGroup.deleted == 0,
-        AIGroupResource.group_id == AIGroup.id,
-        AIGroupResource.deleted == 0,
-        AIGroupResource.resource_type == resource_type.value,
-        AIGroupResource.scope_type == AIGroupResourceScopeType.specified.value,
-        AIGroupResource.resource_id == resource_id,
+        AIBuddyUser.user_id == user_id,
+        AIBuddyUser.deleted == 0,
+        AIBuddyGroup.id == AIBuddyUser.group_id,
+        AIBuddyGroup.deleted == 0,
+        AIBuddyResource.group_id == AIBuddyGroup.id,
+        AIBuddyResource.deleted == 0,
+        AIBuddyResource.resource_type == resource_type.value,
+        AIBuddyResource.scope_type == AIBuddyResourceScopeType.specified.value,
+        AIBuddyResource.resource_id == resource_id,
     )
     return sa.or_(sa.not_(user_group_exists), all_visible_exists, specified_visible_exists)
 
 
-def apply_ai_group_visibility_criteria(
+def apply_ai_buddy_group_visibility_criteria(
     statement: Select[Any],
     *,
     user_id: int,
@@ -97,34 +97,34 @@ def apply_ai_group_visibility_criteria(
         return statement
     options = []
 
-    if AIProvider in resource_models:
-        provider_criteria = build_ai_group_resource_visibility_criteria(
+    if AIBuddyProvider in resource_models:
+        provider_criteria = build_ai_buddy_resource_visibility_criteria(
             user_id=user_id,
-            resource_id=AIProvider.id,
-            resource_type=AIGroupResourceType.provider,
+            resource_id=AIBuddyProvider.id,
+            resource_type=AIBuddyResourceType.provider,
         )
-        options.append(with_loader_criteria(AIProvider, provider_criteria, include_aliases=True))
-    if AIModel in resource_models:
-        model_provider_criteria = build_ai_group_resource_visibility_criteria(
+        options.append(with_loader_criteria(AIBuddyProvider, provider_criteria, include_aliases=True))
+    if AIBuddyModel in resource_models:
+        model_provider_criteria = build_ai_buddy_resource_visibility_criteria(
             user_id=user_id,
-            resource_id=AIModel.provider_id,
-            resource_type=AIGroupResourceType.provider,
+            resource_id=AIBuddyModel.provider_id,
+            resource_type=AIBuddyResourceType.provider,
         )
-        model_criteria = build_ai_group_resource_visibility_criteria(
+        model_criteria = build_ai_buddy_resource_visibility_criteria(
             user_id=user_id,
-            resource_id=AIModel.id,
-            resource_type=AIGroupResourceType.model,
+            resource_id=AIBuddyModel.id,
+            resource_type=AIBuddyResourceType.model,
         )
         options.append(
-            with_loader_criteria(AIModel, sa.and_(model_provider_criteria, model_criteria), include_aliases=True)
+            with_loader_criteria(AIBuddyModel, sa.and_(model_provider_criteria, model_criteria), include_aliases=True)
         )
-    if AIMcp in resource_models:
-        mcp_criteria = build_ai_group_resource_visibility_criteria(
+    if AIBuddyMcp in resource_models:
+        mcp_criteria = build_ai_buddy_resource_visibility_criteria(
             user_id=user_id,
-            resource_id=AIMcp.id,
-            resource_type=AIGroupResourceType.mcp,
+            resource_id=AIBuddyMcp.id,
+            resource_type=AIBuddyResourceType.mcp,
         )
-        options.append(with_loader_criteria(AIMcp, mcp_criteria, include_aliases=True))
+        options.append(with_loader_criteria(AIBuddyMcp, mcp_criteria, include_aliases=True))
 
     if not options:
         return statement

@@ -5,15 +5,15 @@ from sqlalchemy import Select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy_crud_plus import CRUDPlus
 
-from backend.plugin.ai_buddy_group.model import AIGroup
-from backend.plugin.ai_buddy_group.schema.group import CreateAIGroupParam
+from backend.plugin.ai_buddy_group.model import AIBuddyGroup
+from backend.plugin.ai_buddy_group.schema.group import CreateAIBuddyGroupParam
 from backend.utils.timezone import timezone
 
 
-class CRUDAIGroup(CRUDPlus[AIGroup]):
+class CRUDAIBuddyGroup(CRUDPlus[AIBuddyGroup]):
     """AI 分组数据库操作类"""
 
-    async def get(self, db: AsyncSession, pk: int) -> AIGroup | None:
+    async def get(self, db: AsyncSession, pk: int) -> AIBuddyGroup | None:
         """
         获取分组
 
@@ -23,7 +23,7 @@ class CRUDAIGroup(CRUDPlus[AIGroup]):
         """
         return await self.select_model(db, pk, deleted=0)
 
-    async def get_by_ids(self, db: AsyncSession, pks: list[int]) -> Sequence[AIGroup]:
+    async def get_by_ids(self, db: AsyncSession, pks: list[int]) -> Sequence[AIBuddyGroup]:
         """
         批量获取分组
 
@@ -33,7 +33,7 @@ class CRUDAIGroup(CRUDPlus[AIGroup]):
         """
         return await self.select_models(db, id__in=pks, deleted=0)
 
-    async def get_by_name(self, db: AsyncSession, name: str) -> AIGroup | None:
+    async def get_by_name(self, db: AsyncSession, name: str) -> AIBuddyGroup | None:
         """
         通过名称获取分组
 
@@ -55,7 +55,7 @@ class CRUDAIGroup(CRUDPlus[AIGroup]):
             filters['name__like'] = f'%{name}%'
         return await self.select_order('id', 'desc', **filters)
 
-    async def get_all(self, db: AsyncSession) -> Sequence[AIGroup]:
+    async def get_all(self, db: AsyncSession) -> Sequence[AIBuddyGroup]:
         """
         获取所有分组
 
@@ -64,7 +64,7 @@ class CRUDAIGroup(CRUDPlus[AIGroup]):
         """
         return await self.select_models_order(db, 'id', 'desc', deleted=0)
 
-    async def create(self, db: AsyncSession, obj: CreateAIGroupParam) -> AIGroup:
+    async def create(self, db: AsyncSession, obj: CreateAIBuddyGroupParam) -> AIBuddyGroup:
         """
         创建分组
 
@@ -106,4 +106,4 @@ class CRUDAIGroup(CRUDPlus[AIGroup]):
         )
 
 
-ai_group_dao: CRUDAIGroup = CRUDAIGroup(AIGroup)
+ai_buddy_group_dao: CRUDAIBuddyGroup = CRUDAIBuddyGroup(AIBuddyGroup)

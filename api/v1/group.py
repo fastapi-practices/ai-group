@@ -9,41 +9,41 @@ from backend.common.security.permission import RequestPermission
 from backend.common.security.rbac import DependsRBAC
 from backend.database.db import CurrentSession, CurrentSessionTransaction
 from backend.plugin.ai_buddy_group.schema.group import (
-    AIGroupUserIdsParam,
-    CreateAIGroupParam,
-    DeleteAIGroupParam,
-    GetAIGroupDetail,
-    GetAIGroupUserDetail,
-    GetAIGroupWithResourceDetail,
-    UpdateAIGroupParam,
-    UpdateAIGroupResourceParam,
+    AIBuddyUserIdsParam,
+    CreateAIBuddyGroupParam,
+    DeleteAIBuddyGroupParam,
+    GetAIBuddyGroupDetail,
+    GetAIBuddyGroupWithResourceDetail,
+    GetAIBuddyUserDetail,
+    UpdateAIBuddyGroupParam,
+    UpdateAIBuddyResourceParam,
 )
-from backend.plugin.ai_buddy_group.service.group_service import ai_group_service
+from backend.plugin.ai_buddy_group.service.group_service import ai_buddy_group_service
 
 router = APIRouter()
 
 
 @router.get('/all', summary='获取所有 AI 分组', dependencies=[DependsJwtAuth])
-async def get_all_ai_groups(db: CurrentSession) -> ResponseSchemaModel[list[GetAIGroupDetail]]:
-    data = await ai_group_service.get_all(db=db)
+async def get_all_ai_buddy_groups(db: CurrentSession) -> ResponseSchemaModel[list[GetAIBuddyGroupDetail]]:
+    data = await ai_buddy_group_service.get_all(db=db)
     return response_base.success(data=data)
 
 
 @router.get('/users/{user_id}', summary='获取用户所属 AI 分组', dependencies=[DependsJwtAuth])
-async def get_user_ai_groups(
+async def get_user_ai_buddy_groups(
     db: CurrentSession,
     user_id: Annotated[int, Path(description='用户 ID')],
-) -> ResponseSchemaModel[list[GetAIGroupDetail]]:
-    data = await ai_group_service.get_user_groups(db=db, user_id=user_id)
+) -> ResponseSchemaModel[list[GetAIBuddyGroupDetail]]:
+    data = await ai_buddy_group_service.get_user_groups(db=db, user_id=user_id)
     return response_base.success(data=data)
 
 
 @router.get('/{pk}', summary='获取 AI 分组详情', dependencies=[DependsJwtAuth])
-async def get_ai_group(
+async def get_ai_buddy_group(
     db: CurrentSession,
     pk: Annotated[int, Path(description='分组 ID')],
-) -> ResponseSchemaModel[GetAIGroupWithResourceDetail]:
-    data = await ai_group_service.get(db=db, pk=pk)
+) -> ResponseSchemaModel[GetAIBuddyGroupWithResourceDetail]:
+    data = await ai_buddy_group_service.get(db=db, pk=pk)
     return response_base.success(data=data)
 
 
@@ -55,20 +55,20 @@ async def get_ai_group(
         DependsPagination,
     ],
 )
-async def get_ai_groups_paginated(
+async def get_ai_buddy_groups_paginated(
     db: CurrentSession,
     name: Annotated[str | None, Query(description='分组名称')] = None,
-) -> ResponseSchemaModel[PageData[GetAIGroupDetail]]:
-    page_data = await ai_group_service.get_list(db=db, name=name)
+) -> ResponseSchemaModel[PageData[GetAIBuddyGroupDetail]]:
+    page_data = await ai_buddy_group_service.get_list(db=db, name=name)
     return response_base.success(data=page_data)
 
 
 @router.get('/{pk}/users', summary='获取 AI 分组用户', dependencies=[DependsJwtAuth])
-async def get_ai_group_users(
+async def get_ai_buddy_users(
     db: CurrentSession,
     pk: Annotated[int, Path(description='分组 ID')],
-) -> ResponseSchemaModel[list[GetAIGroupUserDetail]]:
-    data = await ai_group_service.get_group_users(db=db, pk=pk)
+) -> ResponseSchemaModel[list[GetAIBuddyUserDetail]]:
+    data = await ai_buddy_group_service.get_group_users(db=db, pk=pk)
     return response_base.success(data=data)
 
 
@@ -80,8 +80,8 @@ async def get_ai_group_users(
         DependsRBAC,
     ],
 )
-async def create_ai_group(db: CurrentSessionTransaction, obj: CreateAIGroupParam) -> ResponseModel:
-    await ai_group_service.create(db=db, obj=obj)
+async def create_ai_buddy_group(db: CurrentSessionTransaction, obj: CreateAIBuddyGroupParam) -> ResponseModel:
+    await ai_buddy_group_service.create(db=db, obj=obj)
     return response_base.success()
 
 
@@ -93,12 +93,12 @@ async def create_ai_group(db: CurrentSessionTransaction, obj: CreateAIGroupParam
         DependsRBAC,
     ],
 )
-async def bind_ai_group_users(
+async def bind_ai_buddy_users(
     db: CurrentSessionTransaction,
     pk: Annotated[int, Path(description='分组 ID')],
-    obj: AIGroupUserIdsParam,
+    obj: AIBuddyUserIdsParam,
 ) -> ResponseModel:
-    await ai_group_service.bind_users(db=db, pk=pk, obj=obj)
+    await ai_buddy_group_service.bind_users(db=db, pk=pk, obj=obj)
     return response_base.success()
 
 
@@ -110,12 +110,12 @@ async def bind_ai_group_users(
         DependsRBAC,
     ],
 )
-async def update_ai_group(
+async def update_ai_buddy_group(
     db: CurrentSessionTransaction,
     pk: Annotated[int, Path(description='分组 ID')],
-    obj: UpdateAIGroupParam,
+    obj: UpdateAIBuddyGroupParam,
 ) -> ResponseModel:
-    count = await ai_group_service.update(db=db, pk=pk, obj=obj)
+    count = await ai_buddy_group_service.update(db=db, pk=pk, obj=obj)
     if count > 0:
         return response_base.success()
     return response_base.fail()
@@ -129,12 +129,12 @@ async def update_ai_group(
         DependsRBAC,
     ],
 )
-async def update_ai_group_resources(
+async def update_ai_buddy_resources(
     db: CurrentSessionTransaction,
     pk: Annotated[int, Path(description='分组 ID')],
-    obj: UpdateAIGroupResourceParam,
+    obj: UpdateAIBuddyResourceParam,
 ) -> ResponseModel:
-    count = await ai_group_service.update_resources(db=db, pk=pk, obj=obj)
+    count = await ai_buddy_group_service.update_resources(db=db, pk=pk, obj=obj)
     if count > 0:
         return response_base.success()
     return response_base.fail()
@@ -148,12 +148,12 @@ async def update_ai_group_resources(
         DependsRBAC,
     ],
 )
-async def unbind_ai_group_users(
+async def unbind_ai_buddy_users(
     db: CurrentSessionTransaction,
     pk: Annotated[int, Path(description='分组 ID')],
-    obj: AIGroupUserIdsParam,
+    obj: AIBuddyUserIdsParam,
 ) -> ResponseModel:
-    count = await ai_group_service.unbind_users(db=db, pk=pk, obj=obj)
+    count = await ai_buddy_group_service.unbind_users(db=db, pk=pk, obj=obj)
     if count > 0:
         return response_base.success()
     return response_base.fail()
@@ -167,8 +167,8 @@ async def unbind_ai_group_users(
         DependsRBAC,
     ],
 )
-async def delete_ai_groups(db: CurrentSessionTransaction, obj: DeleteAIGroupParam) -> ResponseModel:
-    count = await ai_group_service.delete(db=db, obj=obj)
+async def delete_ai_buddy_groups(db: CurrentSessionTransaction, obj: DeleteAIBuddyGroupParam) -> ResponseModel:
+    count = await ai_buddy_group_service.delete(db=db, obj=obj)
     if count > 0:
         return response_base.success()
     return response_base.fail()

@@ -1,7 +1,7 @@
 from backend.common.enums import IntEnum
 
 
-class AIGroupResourceType(IntEnum):
+class AIBuddyResourceType(IntEnum):
     """AI 分组资源类型"""
 
     provider = 0
@@ -9,7 +9,7 @@ class AIGroupResourceType(IntEnum):
     mcp = 2
 
 
-class AIGroupResourceScopeType(IntEnum):
+class AIBuddyResourceScopeType(IntEnum):
     """AI 分组资源范围类型"""
 
     all = 0
