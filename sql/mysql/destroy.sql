@@ -6,6 +6,6 @@ where name in (
     'AIBuddyGroupManage'
 );
 
-drop table if exists ai_buddy_user;
-drop table if exists ai_buddy_resource;
+drop table if exists ai_buddy_group_user;
+drop table if exists ai_buddy_group_resource;
 drop table if exists ai_buddy_group;

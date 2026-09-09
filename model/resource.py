@@ -8,7 +8,7 @@ from backend.common.model import Base, id_key
 class AIBuddyResource(Base):
     """AI 分组资源表"""
 
-    __tablename__ = 'ai_buddy_resource'
+    __tablename__ = 'ai_buddy_group_resource'
     __table_args__ = (
         sa.UniqueConstraint(
             'group_id',
@@ -16,7 +16,7 @@ class AIBuddyResource(Base):
             'scope_type',
             'resource_id',
             'deleted',
-            name='uk_ai_buddy_resource_group_type_scope_resource_deleted',
+            name='uk_ai_buddy_group_resource_group_type_scope_resource_deleted',
         ),
         {'comment': 'AI 分组资源'},
     )
